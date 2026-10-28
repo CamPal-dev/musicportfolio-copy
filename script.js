@@ -264,51 +264,11 @@ setMenu(false);
 function updateHeader() { header.classList.toggle('is-scrolled', window.scrollY > 24); }
 window.addEventListener('scroll', updateHeader, { passive: true });
 updateHeader();
-// Three musical directions, with standard keyboard tab navigation.
-const directionTabs = [...document.querySelectorAll('.direction-tabs [role="tab"]')];
-function selectDirection(index) {
-  directionTabs.forEach((tab, i) => {
-    tab.setAttribute('aria-selected', String(i === index));
-    tab.tabIndex = i === index ? 0 : -1;
-    document.getElementById(tab.getAttribute('aria-controls')).hidden = i !== index;
-  });
-}
-directionTabs.forEach((tab, index) => {
-  tab.addEventListener('click', () => selectDirection(index));
-  tab.addEventListener('keydown', event => {
-    let next;
-    if (event.key === 'ArrowRight') next = (index + 1) % directionTabs.length;
-    if (event.key === 'ArrowLeft') next = (index + directionTabs.length - 1) % directionTabs.length;
-    if (event.key === 'Home') next = 0;
-    if (event.key === 'End') next = directionTabs.length - 1;
-    if (next !== undefined) { event.preventDefault(); selectDirection(next); directionTabs[next].focus(); }
-  });
-});
-const albumCards = [...document.querySelectorAll('.album-card')];
-const albumDots = [...document.querySelectorAll('[data-slide]')];
-let albumIndex = 0;
-function selectAlbum(index, announce = true) {
-  albumIndex = (index + albumCards.length) % albumCards.length;
-  albumCards.forEach((card, i) => {
-    card.hidden = false;
-    card.classList.remove('is-current');
-    card.style.order = '';
-  });
-  const stage = document.querySelector('.album-stage');
-  const target = albumCards[albumIndex];
-  stage.scrollTo({ left: target.offsetLeft - albumCards[0].offsetLeft, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
-  albumDots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === albumIndex)));
-  if (announce) document.querySelector('.carousel-announcement').textContent = target.querySelector('h3').textContent;
-}
-document.querySelector('.carousel-arrow.prev').addEventListener('click', () => selectAlbum(albumIndex - 1));
-document.querySelector('.carousel-arrow.next').addEventListener('click', () => selectAlbum(albumIndex + 1));
-albumDots.forEach((dot, index) => dot.addEventListener('click', () => selectAlbum(index)));
-selectAlbum(0, false);
 
 // Quiet, single-stroke outlines. Only the decorative SVG bends; content stays crisp.
 (() => {
   const ns = 'http://www.w3.org/2000/svg';
-  const selectors = '.music-filters, .video-section, .video-heading, .life-pages, .life-story + .life-story, .story-copy h2, .direction-panel > h2, .direction-tabs button, .album-carousel, .album-art-frame, .direction-moodboard, .editorial-placeholder, .video-preview, dialog, .notebook-player, .origin-panel, .context-panel, .photo-frame, .track-tag, .track';
+  const selectors = '.music-filters, .about-photo, .ep-card, .video-section, .video-heading, .life-pages, .life-story + .life-story, .story-copy h2, .direction-panel > h2, .direction-tabs button, .album-carousel, .album-art-frame, .direction-moodboard, .editorial-placeholder, .video-preview, dialog, .notebook-player, .origin-panel, .context-panel, .photo-frame, .track-tag, .track';
   const observer = new ResizeObserver(entries => entries.forEach(({target}) => draw(target)));
   const shapes = new WeakMap();
   function draw(el) {
